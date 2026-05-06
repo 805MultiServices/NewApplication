@@ -609,7 +609,7 @@
 // 🔧 CONFIGURACIÓN — REEMPLAZA ESTA URL
 // Instrucciones abajo para obtener tu URL
 // =============================================
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxuOqrjRGSzqFXqhCSxQANlL519_xEb1gRB9for4OQiP3M6qPVnCKlRb2chhEls5D23/exec";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzGugZ-bpF_BQpCnQk-SSa7e3CWm-ujDJEjFAyVJOdIiown-W2YblmVCOC1JKetl_pi/exec";
 
 function formatPhone(input) {
   let v = input.value.replace(/\D/g, '').substring(0, 10);
@@ -759,20 +759,23 @@ async function checkQualification() {
     AnioVehiculo: labels.q9[q9] || q9
   };
 
-  // Enviar via script tag — evita CORS completamente
   try {
     const params = new URLSearchParams(payload).toString();
-    const url = GOOGLE_SHEET_URL + '?' + params;
-    const script = document.createElement('script');
-    script.src = url;
-    document.body.appendChild(script);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    document.body.removeChild(script);
+    const callbackName = 'cb_' + Date.now();
+    const url = GOOGLE_SHEET_URL + '?' + params + '&callback=' + callbackName;
+    await new Promise((resolve) => {
+      window[callbackName] = () => { delete window[callbackName]; resolve(); };
+      const script = document.createElement('script');
+      script.src = url;
+      script.onerror = resolve;
+      document.body.appendChild(script);
+      setTimeout(resolve, 5000);
+    });
   } catch(e) {
     console.warn('Error al enviar:', e);
   }
 
-  btn.style.display = 'block';
+    btn.style.display = 'block';
   ind.classList.remove('show');
   btn.disabled = true;
   btn.style.opacity = '0.5';
