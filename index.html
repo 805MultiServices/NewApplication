@@ -609,7 +609,7 @@
 // 🔧 CONFIGURACIÓN — REEMPLAZA ESTA URL
 // Instrucciones abajo para obtener tu URL
 // =============================================
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxuOqrjRGSzqFXqhCSxQANlL519_xEb1gRB9for4OQiP3M6qPVnCKlRb2chhEls5D23/exec";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzKD3DU56Ho-KxnRugy8SCtEk56ys4BFuGym5o3S1FkkXhGspjLkEk4_FmlQzfib2JB/exec";
 
 function formatPhone(input) {
   let v = input.value.replace(/\D/g, '').substring(0, 10);
@@ -760,11 +760,9 @@ async function checkQualification() {
   };
 
   try {
-    // Enviar via GET con parametros en URL (evita problemas de CORS)
     const params = new URLSearchParams(payload).toString();
     const url = GOOGLE_SHEET_URL + '?' + params;
-    const img = new Image();
-    img.src = url;
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
   } catch(e) {
     console.warn('Error al enviar:', e);
   }
