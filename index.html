@@ -759,10 +759,15 @@ async function checkQualification() {
     AnioVehiculo: labels.q9[q9] || q9
   };
 
+  // Enviar via script tag — evita CORS completamente
   try {
     const params = new URLSearchParams(payload).toString();
     const url = GOOGLE_SHEET_URL + '?' + params;
-    await fetch(url, { method: 'GET', mode: 'no-cors' });
+    const script = document.createElement('script');
+    script.src = url;
+    document.body.appendChild(script);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    document.body.removeChild(script);
   } catch(e) {
     console.warn('Error al enviar:', e);
   }
